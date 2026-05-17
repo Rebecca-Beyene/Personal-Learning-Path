@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Engineering Roadmap</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #06061a 0%, #0f1535 40%, #1a1040 70%, #0d1f35 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: white;
+        }
+
+        #stars {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: white;
+            animation: twinkle var(--d, 2s) ease-in-out infinite alternate;
+            animation-delay: var(--delay, 0s);
+        }
+
+        @keyframes twinkle {
+            from { opacity: 0.1; transform: scale(0.7); }
+            to   { opacity: 1;   transform: scale(1.3); }
+        }
+
+        .page { position: relative; z-index: 1; }
+
+        /* ── Header ── */
+        .header {
+            text-align: center;
+            padding: 48px 20px 8px;
+        }
+
+        .header h1 {
+            font-size: clamp(1.9em, 5vw, 3.1em);
+            font-weight: 900;
+            background: linear-gradient(120deg, #FFD700 0%, #FF6B6B 50%, #4ECDC4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            line-height: 1.15;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.6);
+            font-size: 1.05em;
+            font-weight: 600;
+        }
+
+        /* ── Progress ── */
+        .prog-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 520px;
+            margin: 26px auto 0;
+            padding: 0 24px;
+        }
+
+        .prog-track {
+            flex: 1;
+            height: 16px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 8px;
+            border: 1.5px solid rgba(255,255,255,0.12);
+            overflow: hidden;
+        }
+
+        .prog-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #22C55E, #FFD700);
+            border-radius: 8px;
+            transition: width 0.6s cubic-bezier(.4,0,.2,1);
+        }
+
+        .prog-label {
+            font-weight: 800;
+            font-size: 0.95em;
+            color: #FFD700;
+            white-space: nowrap;
+        }
+
+        /* ── Map ── */
+        .map-wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 10px 12px 30px;
+        }
+
+        .map-svg { width: 100%; height: auto; }
+
+        /* SVG hover */
+        .stop-group { cursor: pointer; }
+
+        .stop-main {
+            transition: transform 0.25s cubic-bezier(.34,1.56,.64,1);
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        .stop-group:hover .stop-main { transform: scale(1.13); }
+
+        /* ── Modal ── */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.78);
+            backdrop-filter: blur(7px);
+            z-index: 900;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .overlay.open { display: flex; }
+
+        .modal {
+            background: linear-gradient(145deg, #131326, #0e1825);
+            border-radius: 22px;
+            padding: 28px;
+            max-width: 680px;
+            width: 100%;
+            max-height: 88vh;
+            overflow-y: auto;
+            border: 1.5px solid rgba(255,255,255,0.09);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.65);
+            position: relative;
+            animation: popIn .28s cubic-bezier(.34,1.56,.64,1);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.82); opacity: 0; }
+            to   { transform: scale(1);    opacity: 1; }
+        }
+
+        .modal-x {
+            position: absolute;
+            top: 14px; right: 14px;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            border: none; color: white; cursor: pointer;
+            font-size: 0.95em;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .2s;
+        }
+
+        .modal-x:hover { background: rgba(255,255,255,0.18); }
+
+        .modal-head {
+            display: flex; align-items: flex-start; gap: 14px;
+            margin-bottom: 18px; padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .modal-icon {
+            font-size: 2.7em;
+            display: inline-block;
+            animation: float 2.8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%,100% { transform: translateY(0); }
+            50%      { transform: translateY(-7px); }
+        }
+
+        .modal-stop-title {
+            font-size: 1.65em;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 5px;
+        }
+
+        .modal-stop-desc {
+            color: rgba(255,255,255,0.55);
+            font-size: 0.88em;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        .sec-label {
+            font-size: 0.72em;
+            font-weight: 800;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 9px;
+        }
+
+        .skills-wrap { margin-bottom: 20px; }
+
+        .skill-chip {
+            display: inline-block;
+            padding: 4px 11px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin: 3px;
+        }
+
+        .course-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 14px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(255,255,255,0.07);
+            margin-bottom: 9px;
+            text-decoration: none;
+            color: white;
+            transition: all .2s ease;
+        }
+
+        .course-row:hover {
+            background: rgba(255,255,255,0.09);
+            border-color: rgba(255,255,255,0.18);
+            transform: translateX(4px);
+        }
+
+        .course-row.done {
+            border-color: rgba(34,197,94,0.5);
+            background: rgba(34,197,94,0.07);
+        }
+
+        .check-btn {
+            flex-shrink: 0;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.22);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .2s;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .course-row.done .check-btn {
+            background: #22C55E;
+            border-color: #22C55E;
+        }
+
+        .course-info { flex: 1; min-width: 0; }
+
+        .course-title {
+            font-weight: 700;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .course-badges { display: flex; flex-wrap: wrap; gap: 5px; }
+
+        .bdg {
+            font-size: 0.72em;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 8px;
+        }
+
+        .bdg-plat { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.55); }
+        .bdg-price { background: rgba(255,215,0,0.14); color: #FFD700; }
+        .bdg-tip   { background: rgba(139,92,246,0.22); color: #C4B5FD; }
+
+        .arr { color: rgba(255,255,255,0.22); flex-shrink: 0; font-size: 1.1em; }
+
+        footer {
+            text-align: center;
+            padding: 36px 20px 48px;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.87em;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer strong { color: rgba(255,255,255,0.55); }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+
+        @media (max-width: 480px) {
+            .modal { padding: 18px 14px; }
+            .modal-stop-title { font-size: 1.3em; }
+        }
+    </style>
+</head>
+<body>
+<div id="stars"></div>
+
+<div class="page">
+    <header class="header">
+        <h1>🗺️ Backend Engineering Roadmap</h1>
+        <p>Your path from zero to backend engineer at SpaceX, OpenAI &amp; beyond</p>
+    </header>
+
+    <div class="prog-wrap">
+        <span style="font-size:1.5em">⭐</span>
+        <div class="prog-track">
+            <div class="prog-fill" id="prog-fill"></div>
+        </div>
+        <span class="prog-label" id="prog-label">0 / 15 courses</span>
+    </div>
+
+    <div class="map-wrap">
+        <svg class="map-svg" viewBox="0 0 900 2520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="g1" cx="38%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#FF9999"/>
+                    <stop offset="100%" stop-color="#B91C0A"/>
+                </radialGradient>
+                <radialGradient id="g2" cx="38%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#7AF0E8"/>
+                    <stop offset="100%" stop-color="#0A8880"/>
+                </radialGradient>
+                <radialGradient id="g3" cx="38%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#CC88FF"/>
+                    <stop offset="100%" stop-color="#7216A0"/>
+                </radialGradient>
+                <radialGradient id="g4" cx="38%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#78F5A8"/>
+                    <stop offset="100%" stop-color="#047857"/>
+                </radialGradient>
+                <radialGradient id="g5" cx="38%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#FDE68A"/>
+                    <stop offset="100%" stop-color="#B45309"/>
+                </radialGradient>
+                <radialGradient id="gS" cx="38%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#86EFAC"/>
+                    <stop offset="100%" stop-color="#15803D"/>
+                </radialGradient>
+                <radialGradient id="gF" cx="38%" cy="30%" r="65%">
+                    <stop offset="0%" stop-color="#FDE68A"/>
+                    <stop offset="100%" stop-color="#C97D06"/>
+                </radialGradient>
+                <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="5" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+            </defs>
+
+            <!-- Ground terrain -->
+            <ellipse cx="450" cy="2508" rx="530" ry="52" fill="#163016" opacity="0.7"/>
+            <ellipse cx="180" cy="2496" rx="210" ry="36" fill="#1e4a1e" opacity="0.5"/>
+            <ellipse cx="730" cy="2498" rx="200" ry="36" fill="#1e4a1e" opacity="0.5"/>
+
+            <!-- Trees -->
+            <polygon points="110,2455 142,2390 174,2455" fill="#1b561b" opacity="0.65"/>
+            <polygon points="134,2460 164,2402 194,2460" fill="#236023" opacity="0.5"/>
+            <polygon points="688,2457 720,2392 752,2457" fill="#1b561b" opacity="0.65"/>
+            <polygon points="712,2462 742,2405 772,2462" fill="#236023" opacity="0.5"/>
+
+            <!-- Scattered sparkles -->
+            <circle cx="55"  cy="2220" r="2"   fill="#FFD700" opacity="0.5"/>
+            <circle cx="855" cy="2070" r="1.5" fill="white"   opacity="0.4"/>
+            <circle cx="72"  cy="1820" r="2"   fill="#4ECDC4" opacity="0.5"/>
+            <circle cx="842" cy="1640" r="1.5" fill="#FF6B6B" opacity="0.45"/>
+            <circle cx="50"  cy="1420" r="2.5" fill="white"   opacity="0.4"/>
+            <circle cx="855" cy="1230" r="2"   fill="#FFD700" opacity="0.5"/>
+            <circle cx="68"  cy="1020" r="2"   fill="#4ECDC4" opacity="0.5"/>
+            <circle cx="840" cy="840"  r="1.5" fill="white"   opacity="0.4"/>
+            <circle cx="55"  cy="620"  r="2"   fill="#FF6B6B" opacity="0.45"/>
+            <circle cx="828" cy="440"  r="2"   fill="#FFD700" opacity="0.5"/>
+            <circle cx="72"  cy="265"  r="2.5" fill="white"   opacity="0.4"/>
+            <circle cx="820" cy="130"  r="2"   fill="#4ECDC4" opacity="0.5"/>
+
+            <!-- Clouds -->
+            <g opacity="0.11" transform="translate(72,1920)">
+                <ellipse cx="0" cy="0" rx="50" ry="20" fill="white"/>
+                <ellipse cx="26" cy="-14" rx="35" ry="27" fill="white"/>
+                <ellipse cx="-20" cy="-10" rx="28" ry="20" fill="white"/>
+            </g>
+            <g opacity="0.11" transform="translate(800,1670)">
+                <ellipse cx="0" cy="0" rx="46" ry="18" fill="white"/>
+                <ellipse cx="22" cy="-13" rx="32" ry="24" fill="white"/>
+                <ellipse cx="-18" cy="-9" rx="26" ry="18" fill="white"/>
+            </g>
+            <g opacity="0.09" transform="translate(68,1170)">
+                <ellipse cx="0" cy="0" rx="48" ry="19" fill="white"/>
+                <ellipse cx="24" cy="-13" rx="33" ry="25" fill="white"/>
+                <ellipse cx="-19" cy="-9" rx="27" ry="19" fill="white"/>
+            </g>
+            <g opacity="0.09" transform="translate(820,900)">
+                <ellipse cx="0" cy="0" rx="44" ry="17" fill="white"/>
+                <ellipse cx="21" cy="-12" rx="30" ry="23" fill="white"/>
+                <ellipse cx="-16" cy="-8" rx="24" ry="17" fill="white"/>
+            </g>
+            <g opacity="0.09" transform="translate(74,590)">
+                <ellipse cx="0" cy="0" rx="42" ry="17" fill="white"/>
+                <ellipse cx="20" cy="-11" rx="28" ry="21" fill="white"/>
+                <ellipse cx="-16" cy="-8" rx="23" ry="16" fill="white"/>
+            </g>
+
+            <!-- Road glow -->
+            <path d="M 450 2480 C 450 2370,700 2260,700 2130
+                     C 700 2000,270 1890,270 1745
+                     C 270 1600,700 1490,700 1355
+                     C 700 1220,260 1115,260 955
+                     C 260 795,655 685,648 528
+                     C 640 390,450 278,450 162"
+                  fill="none" stroke="rgba(255,215,0,0.1)" stroke-width="34" stroke-linecap="round"/>
+
+            <!-- Animated road -->
+            <path d="M 450 2480 C 450 2370,700 2260,700 2130
+                     C 700 2000,270 1890,270 1745
+                     C 270 1600,700 1490,700 1355
+                     C 700 1220,260 1115,260 955
+                     C 260 795,655 685,648 528
+                     C 640 390,450 278,450 162"
+                  fill="none" stroke="rgba(255,215,0,0.58)" stroke-width="7"
+                  stroke-dasharray="22,15" stroke-linecap="round">
+                <animate attributeName="stroke-dashoffset" from="0" to="-370" dur="7s" repeatCount="indefinite"/>
+            </path>
+
+            <!-- ══ START ══ -->
+            <g transform="translate(450,2480)">
+                <circle r="42" fill="#22C55E" opacity="0.1">
+                    <animate attributeName="r" values="42;65;42" dur="2.6s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.1;0;0.1" dur="2.6s" repeatCount="indefinite"/>
+                </circle>
+                <circle r="34" fill="url(#gS)" filter="url(#glow)"/>
+                <text text-anchor="middle" dominant-baseline="central" font-size="20">🚦</text>
+                <text text-anchor="middle" font-size="11" font-family="Nunito,sans-serif"
+                      font-weight="800" fill="rgba(255,255,255,0.75)" y="52">START HERE</text>
+            </g>
+
+            <!-- ══ STOP 1 — Linux & OS (700, 2130) ══ -->
+            <g class="stop-group" onclick="openModal(0)">
+                <circle cx="700" cy="2130" r="68" fill="#FF6B6B" opacity="0.08">
+                    <animate attributeName="r" values="68;90;68" dur="3.2s" repeatCount="indefinite" begin="0s"/>
+                    <animate attributeName="opacity" values="0.08;0;0.08" dur="3.2s" repeatCount="indefinite" begin="0s"/>
+                </circle>
+                <circle class="stop-main" cx="700" cy="2130" r="58"
+                        fill="url(#g1)" stroke="rgba(255,255,255,0.45)" stroke-width="3" filter="url(#glow)"/>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="30" x="700" y="2120">🐧</text>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="10.5" font-family="Nunito,sans-serif" font-weight="900"
+                      fill="white" x="700" y="2148">Linux &amp; OS</text>
+                <circle cx="750" cy="2078" r="17" fill="white"/>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="13" font-family="Nunito,sans-serif" font-weight="900"
+                      fill="#B91C0A" x="750" y="2079">1</text>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="9" font-family="Nunito,sans-serif"
+                      fill="rgba(255,255,255,0.45)" x="700" y="2205">3 courses · tap to explore</text>
+            </g>
+
+            <!-- ══ STOP 2 — Web Pages (270, 1745) ══ -->
+            <g class="stop-group" onclick="openModal(1)">
+                <circle cx="270" cy="1745" r="68" fill="#4ECDC4" opacity="0.08">
+                    <animate attributeName="r" values="68;90;68" dur="3.2s" repeatCount="indefinite" begin="0.65s"/>
+                    <animate attributeName="opacity" values="0.08;0;0.08" dur="3.2s" repeatCount="indefinite" begin="0.65s"/>
+                </circle>
+                <circle class="stop-main" cx="270" cy="1745" r="58"
+                        fill="url(#g2)" stroke="rgba(255,255,255,0.45)" stroke-width="3" filter="url(#glow)"/>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="30" x="270" y="1735">🌐</text>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="10.5" font-family="Nunito,sans-serif" font-weight="900"
+                      fill="white" x="270" y="1763">Web Pages</text>
+                <circle cx="320" cy="1693" r="17" fill="white"/>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="13" font-family="Nunito,sans-serif" font-weight="900"
+                      fill="#0A8880" x="320" y="1694">2</text>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="9" font-family="Nunito,sans-serif"
+                      fill="rgba(255,255,255,0.45)" x="270" y="1820">3 courses · tap to explore</text>
+            </g>
+
+            <!-- ══ STOP 3 — APIs (700, 1355) ══ -->
+            <g class="stop-group" onclick="openModal(2)">
+                <circle cx="700" cy="1355" r="68" fill="#A855F7" opacity="0.08">
+                    <animate attributeName="r" values="68;90;68" dur="3.2s" repeatCount="indefinite" begin="1.3s"/>
+                    <animate attributeName="opacity" values="0.08;0;0.08" dur="3.2s" repeatCount="indefinite" begin="1.3s"/>
+                </circle>
+                <circle class="stop-main" cx="700" cy="1355" r="58"
+                        fill="url(#g3)" stroke="rgba(255,255,255,0.45)" stroke-width="3" filter="url(#glow)"/>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="30" x="700" y="1345">⚡</text>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="10.5" font-family="Nunito,sans-serif" font-weight="900"
+                      fill="white" x="700" y="1373">APIs</text>
+                <circle cx="750" cy="1303" r="17" fill="white"/>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="13" font-family="Nunito,sans-serif" font-weight="900"
+                      fill="#7216A0" x="750" y="1304">3</text>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="9" font-family="Nunito,sans-serif"
+                      fill="rgba(255,255,255,0.45)" x="700" y="1430">3 courses · tap to explore</text>
+            </g>
+
+            <!-- ══ STOP 4 — CI/CD (260, 955) ══ -->
+            <g class="stop-group" onclick="openModal(3)">
+                <circle cx="260" cy="955" r="68" fill="#22C55E" opacity="0.08">
+                    <animate attributeName="r" values="68;90;68" dur="3.2s" repeatCount="indefinite" begin="1.95s"/>
+                    <animate attributeName="opacity" values="0.08;0;0.08" dur="3.2s" repeatCount="indefinite" begin="1.95s"/>
+                </circle>
+                <circle class="stop-main" cx="260" cy="955" r="58"
+                        fill="url(#g4)" stroke="rgba(255,255,255,0.45)" stroke-width="3" filter="url(#glow)"/>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="30" x="260" y="945">🚀</text>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="10.5" font-family="Nunito,sans-serif" font-weight="900"
+                      fill="white" x="260" y="973">CI/CD</text>
+                <circle cx="310" cy="903" r="17" fill="white"/>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="13" font-family="Nunito,sans-serif" font-weight="900"
+                      fill="#047857" x="310" y="904">4</text>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="9" font-family="Nunito,sans-serif"
+                      fill="rgba(255,255,255,0.45)" x="260" y="1030">3 courses · tap to explore</text>
+            </g>
+
+            <!-- ══ STOP 5 — System Design (648, 528) ══ -->
+            <g class="stop-group" onclick="openModal(4)">
+                <circle cx="648" cy="528" r="68" fill="#F59E0B" opacity="0.08">
+                    <animate attributeName="r" values="68;90;68" dur="3.2s" repeatCount="indefinite" begin="2.6s"/>
+                    <animate attributeName="opacity" values="0.08;0;0.08" dur="3.2s" repeatCount="indefinite" begin="2.6s"/>
+                </circle>
+                <circle class="stop-main" cx="648" cy="528" r="58"
+                        fill="url(#g5)" stroke="rgba(255,255,255,0.45)" stroke-width="3" filter="url(#glow)"/>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="30" x="648" y="518">🏗️</text>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="10.5" font-family="Nunito,sans-serif" font-weight="900"
+                      fill="white" x="648" y="546">System Design</text>
+                <circle cx="698" cy="476" r="17" fill="white"/>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="13" font-family="Nunito,sans-serif" font-weight="900"
+                      fill="#B45309" x="698" y="477">5</text>
+                <text text-anchor="middle" dominant-baseline="central"
+                      font-size="9" font-family="Nunito,sans-serif"
+                      fill="rgba(255,255,255,0.45)" x="648" y="603">3 courses · tap to explore</text>
+            </g>
+
+            <!-- ══ FINISH ══ -->
+            <g transform="translate(450,162)">
+                <circle r="50" fill="#FFD700" opacity="0.08">
+                    <animate attributeName="r" values="50;76;50" dur="2.8s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.08;0;0.08" dur="2.8s" repeatCount="indefinite"/>
+                </circle>
+                <circle r="40" fill="url(#gF)" filter="url(#glow)"/>
+                <text text-anchor="middle" dominant-baseline="central" font-size="26">🏆</text>
+                <text text-anchor="middle" font-size="11" font-family="Nunito,sans-serif"
+                      font-weight="900" fill="white" y="58">BACKEND ENGINEER</text>
+                <text text-anchor="middle" font-size="9" font-family="Nunito,sans-serif"
+                      font-weight="700" fill="rgba(255,255,255,0.45)" y="74">SpaceX · OpenAI · Palantir</text>
+            </g>
+
+        </svg>
+    </div>
+
+    <footer>
+        <p><strong>🎯 Targeting</strong> — SpaceX · OpenAI · Palantir · Snowflake · Plaid · Microsoft</p>
+        <p style="margin-top:8px">Tap any stop to see courses &amp; track your progress ⭐</p>
+    </footer>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+    <div class="modal" id="modal">
+        <button class="modal-x" onclick="closeModal()">✕</button>
+        <div id="modal-body"></div>
+    </div>
+</div>
+
+<script>
+const STOPS = [
+    {
+        emoji: "🐧", title: "Linux & Operating Systems", color: "#FF6B6B",
+        desc: "The foundation everything runs on — systemd, cron, bash scripting, process management, SSH.",
+        skills: ["systemd","cron jobs","bash scripting","file permissions","process management","SSH","networking basics","package managers"],
+        courses: [
+            { name: "Complete Linux Training Course to Get Your Dream IT Job 2026", platform: "Udemy", price: "$15–20",
+              url: "https://www.udemy.com/course/complete-linux-training-course-to-get-your-dream-it-job/", tip: "⭐ Covers systemd & cron directly — start here" },
+            { name: "Linux Administration Bootcamp: Beginner to Advanced", platform: "Udemy", price: "$15–20",
+              url: "https://www.udemy.com/course/linux-administration-bootcamp/", tip: null },
+            { name: "Linux: From Beginner to System Administrator", platform: "Udemy", price: "$15–20",
+              url: "https://www.udemy.com/course/linux-from-beginner-to-system-administrator/", tip: null }
+        ]
+    },
+    {
+        emoji: "🌐", title: "Web Pages", color: "#4ECDC4",
+        desc: "Build pages like your job tracker. HTML, CSS, JavaScript — you already have a feel for this, now go deep.",
+        skills: ["HTML5","CSS3","JavaScript ES6+","DOM manipulation","responsive design","Fetch API","localStorage","animations"],
+        courses: [
+            { name: "The Complete Full-Stack Web Development Bootcamp", platform: "Udemy", price: "$15–20",
+              url: "https://www.udemy.com/course/the-complete-web-development-bootcamp/", tip: "⭐ 150K+ ratings, 4.8 stars — gold standard" },
+            { name: "Frontend Masters", platform: "Frontend Masters", price: "$39/mo",
+              url: "https://frontendmasters.com", tip: "Upgrade here once you're intermediate" },
+            { name: "freeCodeCamp Web Development Certifications", platform: "freeCodeCamp", price: "Free",
+              url: "https://www.freecodecamp.org", tip: "Great for extra hands-on practice" }
+        ]
+    },
+    {
+        emoji: "⚡", title: "APIs", color: "#A855F7",
+        desc: "REST, gRPC, GraphQL — the backbone of every backend role in your tracker. Design, build, and secure APIs from scratch.",
+        skills: ["REST principles","HTTP methods","gRPC","GraphQL","JWT / OAuth","API versioning","rate limiting","OpenAPI / Swagger"],
+        courses: [
+            { name: "REST API Design, Development & Management", platform: "Udemy", price: "$15–20",
+              url: "https://www.udemy.com/topic/rest-api/", tip: "⭐ Maps directly to every job in your tracker" },
+            { name: "API Development with Google Cloud / Apigee", platform: "Coursera", price: "$49/mo",
+              url: "https://www.coursera.org/courses?query=api", tip: "Covers API gateways (Palantir & Microsoft)" },
+            { name: "gRPC [Golang] Master Class: APIs & Microservices", platform: "Udemy", price: "$15–20",
+              url: "https://www.udemy.com/topic/grpc/", tip: "SpaceX & OpenAI use gRPC" }
+        ]
+    },
+    {
+        emoji: "🚀", title: "CI/CD", color: "#22C55E",
+        desc: "Automate how code ships from your laptop to production. Build pipelines, testing gates, and deployment workflows.",
+        skills: ["GitHub Actions","Jenkins","Docker","pipelines","automated testing","deployment strategies","secrets management","artifacts"],
+        courses: [
+            { name: "Learn GitHub Actions for CI/CD DevOps Pipelines", platform: "Udemy", price: "$15–20",
+              url: "https://www.udemy.com/course/learn-github-actions-ci-cd-devops-pipelines/", tip: "⭐ #1 in industry — 33% adoption, free on public repos" },
+            { name: "Jenkins: Jobs, Pipelines, CI/CD for Beginners", platform: "Udemy", price: "$15–20",
+              url: "https://www.udemy.com/course/jenkins-ci-cd-pipelines-devops-for-beginners/", tip: "Enterprise standard — Palantir & Microsoft" },
+            { name: "Best CI/CD Tools 2026 — Free Comparison Guide", platform: "Free Article", price: "Free",
+              url: "https://devopstales.com/devops/best-ci-cd-tools-comparison-2026/", tip: "Read this before buying any course" }
+        ]
+    },
+    {
+        emoji: "🏗️", title: "System Design", color: "#F59E0B",
+        desc: "Design systems that handle millions of users. Load balancers, distributed databases, caching, API gateways — what interviews test.",
+        skills: ["load balancers","API gateways","CAP theorem","caching strategies","database sharding","microservices","message queues","consistency models"],
+        courses: [
+            { name: "ByteByteGo — by Alex Xu (System Design Interview book author)", platform: "ByteByteGo", price: "$9/mo",
+              url: "https://bytebytego.com", tip: "⭐ Start here — visual diagrams, very digestible" },
+            { name: "Grokking Modern System Design Interview", platform: "Educative", price: "$49/mo",
+              url: "https://www.educative.io/courses/grokking-the-system-design-interview", tip: "Industry depth standard" },
+            { name: "Grokking the System Design Interview", platform: "DesignGurus", price: "~$79 one-time",
+              url: "https://www.designgurus.io/course/grokking-the-system-design-interview", tip: "140K+ learners, interview-focused" }
+        ]
+    }
+];
+
+const KEY = 'roadmap_v1';
+
+function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; }
+}
+
+function save(p) { localStorage.setItem(KEY, JSON.stringify(p)); }
+
+function refreshBar() {
+    const p = load();
+    const total = STOPS.reduce((s, st) => s + st.courses.length, 0);
+    const done  = Object.values(p).filter(Boolean).length;
+    document.getElementById('prog-fill').style.width = (done / total * 100) + '%';
+    document.getElementById('prog-label').textContent = `${done} / ${total} courses`;
+}
+
+function openModal(idx) {
+    const s = STOPS[idx];
+    const p = load();
+
+    const skills = s.skills.map(sk =>
+        `<span class="skill-chip" style="background:${s.color}1e;color:${s.color};border:1px solid ${s.color}40">${sk}</span>`
+    ).join('');
+
+    const courses = s.courses.map((c, ci) => {
+        const key  = `${idx}-${ci}`;
+        const done = !!p[key];
+        return `
+        <a href="${c.url}" target="_blank" rel="noopener"
+           class="course-row${done ? ' done' : ''}" id="cr-${idx}-${ci}">
+            <button class="check-btn" onclick="toggle(event,${idx},${ci})">${done ? '✓' : ''}</button>
+            <div class="course-info">
+                <div class="course-title">${c.name}</div>
+                <div class="course-badges">
+                    <span class="bdg bdg-plat">${c.platform}</span>
+                    <span class="bdg bdg-price">${c.price}</span>
+                    ${c.tip ? `<span class="bdg bdg-tip">${c.tip}</span>` : ''}
+                </div>
+            </div>
+            <span class="arr">↗</span>
+        </a>`;
+    }).join('');
+
+    document.getElementById('modal-body').innerHTML = `
+        <div class="modal-head">
+            <span class="modal-icon">${s.emoji}</span>
+            <div>
+                <div class="modal-stop-title" style="color:${s.color}">${s.title}</div>
+                <div class="modal-stop-desc">${s.desc}</div>
+            </div>
+        </div>
+        <div class="skills-wrap">
+            <div class="sec-label">Skills You'll Gain</div>
+            ${skills}
+        </div>
+        <div>
+            <div class="sec-label" style="margin-top:18px">Courses</div>
+            ${courses}
+        </div>`;
+
+    document.getElementById('overlay').classList.add('open');
+}
+
+function toggle(e, si, ci) {
+    e.preventDefault();
+    e.stopPropagation();
+    const key = `${si}-${ci}`;
+    const p   = load();
+    p[key]    = !p[key];
+    save(p);
+    const row = document.getElementById(`cr-${si}-${ci}`);
+    const btn = row.querySelector('.check-btn');
+    row.classList.toggle('done', !!p[key]);
+    btn.textContent = p[key] ? '✓' : '';
+    refreshBar();
+}
+
+function closeModal()  { document.getElementById('overlay').classList.remove('open'); }
+function overlayClick(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// Stars
+(function() {
+    const c = document.getElementById('stars');
+    for (let i = 0; i < 100; i++) {
+        const s   = document.createElement('div');
+        s.className = 'star';
+        const sz  = Math.random() * 2.4 + 0.6;
+        s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${(Math.random()*2.5+1).toFixed(2)}s;--delay:${(Math.random()*4).toFixed(2)}s;`;
+        c.appendChild(s);
+    }
+})();
+
+refreshBar();
+</script>
+</body>
+</html>

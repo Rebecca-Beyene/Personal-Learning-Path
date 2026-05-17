@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Requirements Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-inactive {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+        }
+
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .table-view {
+            display: none;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        .table-view.active {
+            display: block;
+        }
+
+        .grid-view.hidden {
+            display: none;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .company-name {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .position {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .salary {
+            background: #f0f7ff;
+            color: #667eea;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 0.9em;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e8f0ff;
+            color: #667eea;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .tag.domain {
+            background: #fff4e6;
+            color: #d97706;
+        }
+
+        .tag.experience {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        thead {
+            background: #667eea;
+            color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-view {
+            display: none;
+        }
+
+        .comparison-view.active {
+            display: block;
+        }
+
+        .comparison-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .comparison-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .comparison-item {
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .comparison-item strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .skill-matrix {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+
+        .skill-matrix h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        .matrix-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .matrix-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .matrix-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+            background: #f9fafb;
+        }
+
+        .matrix-check {
+            color: #16a34a;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .matrix-x {
+            color: #dc2626;
+        }
+
+        .filter-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .filter-section h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .grid-view {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💼 Job Requirements Tracker</h1>
+            <p>Compare backend engineering roles across top tech companies</p>
+        </header>
+
+        <div class="filter-section">
+            <h3>View Options</h3>
+            <div class="controls">
+                <div class="view-toggle">
+                    <button class="btn btn-active" onclick="switchView('grid')">Grid View</button>
+                    <button class="btn btn-inactive" onclick="switchView('table')">Table View</button>
+                    <button class="btn btn-inactive" onclick="switchView('comparison')">Comparison</button>
+                    <button class="btn btn-inactive" onclick="switchView('skills')">Skills Matrix</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRID VIEW -->
+        <div id="grid-view" class="grid-view">
+            <!-- Jobs will be inserted here by JavaScript -->
+        </div>
+
+        <!-- TABLE VIEW -->
+        <div id="table-view" class="table-view">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Position</th>
+                        <th>Experience</th>
+                        <th>Languages</th>
+                        <th>Salary Range</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- COMPARISON VIEW -->
+        <div id="comparison-view" class="comparison-view">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <!-- SKILLS MATRIX VIEW -->
+        <div id="skills-view" class="skill-matrix" style="display: none;">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <footer>
+        <p>Last updated: May 2026 | Track your career growth</p>
+    </footer>
+
+    <script>
+        const jobs = [
+            {
+                company: "SpaceX",
+                position: "Backend Software Engineer, GNC (Starlink)",
+                experience: "1-2 years",
+                languages: ["C++", "Python", "Golang"],
+                apis: ["REST", "gRPC (implicit)"],
+                domains: ["Distributed Systems", "Satellites", "Real-time Systems", "Physics Simulation"],
+                salary: "$125K-$175K",
+                required: "Bachelor's in STEM + 1 year OR 2 years professional",
+                tools: ["Docker", "Kubernetes", "PostgreSQL", "CockroachDB"]
+            },
+            {
+                company: "Snowflake",
+                position: "Software Engineer",
+                experience: "2-7 years",
+                languages: ["Java", "Python", "C++", "SQL"],
+                apis: ["REST APIs", "Data APIs"],
+                domains: ["Large-scale Systems", "Database Internals", "Data Governance"],
+                salary: "$160K-$230K",
+                required: "2-7 years designing large-scale systems, BS/MS/PhD in CS",
+                tools: ["Kubernetes", "Cloud Platforms"]
+            },
+            {
+                company: "Plaid",
+                position: "Software Engineer",
+                experience: "5+ years",
+                languages: ["Java", "Python", "Go"],
+                apis: ["REST APIs", "Microservices"],
+                domains: ["Financial Systems", "Microservices", "Relational Databases"],
+                salary: "$190.8K-$262.8K",
+                required: "5+ years, MySQL/relational databases, microservices, leadership skills",
+                tools: ["MySQL", "Microservices Architecture"]
+            },
+            {
+                company: "OpenAI",
+                position: "Backend Software Engineer",
+                experience: "Not specified (Entry-level friendly)",
+                languages: ["Go", "Python", "Rust", "C++"],
+                apis: ["REST APIs", "Service APIs"],
+                domains: ["Distributed Systems", "AI/Safety", "Backend Infrastructure"],
+                salary: "$185K-$385K",
+                required: "Distributed systems, APIs, production backend services",
+                tools: ["Cloud Infrastructure", "AI Platforms"]
+            },
+            {
+                company: "Palantir",
+                position: "Backend Software Engineer (Infrastructure)",
+                experience: "Not specified (Entry-level friendly)",
+                languages: ["Java", "Rust", "Go", "C++", "Python"],
+                apis: ["Cassandra", "Elasticsearch", "Kafka APIs"],
+                domains: ["Distributed Systems", "Data Processing", "Search/Indexing", "Cloud Infrastructure"],
+                salary: "$135K-$200K",
+                required: "CS/Math/Physics background, storage/data processing systems",
+                tools: ["Cassandra", "Elasticsearch", "Spark", "Kafka", "Kubernetes", "Gradle"]
+            },
+            {
+                company: "Microsoft",
+                position: "Backend Engineer (Copilot)",
+                experience: "4+ years",
+                languages: ["C", "C++", "C#", "Java", "JavaScript", "Python"],
+                apis: ["GraphQL", "REST", "Protobuf", "Thrift", "WebSocket", "SSE", "WebRTC"],
+                domains: ["Cloud Infrastructure", "AI Platforms", "Distributed Systems", "Performance Analysis"],
+                salary: "Not specified",
+                required: "Bachelor's in CS + 4+ years OR equivalent",
+                tools: ["Azure", "AWS", "GCP", "Feature Flags", "A/B Testing"]
+            }
+        ];
+
+        function createJobCard(job) {
+            return `
+                <div class="job-card">
+                    <div class="company-name">${job.company}</div>
+                    <div class="position">${job.position}</div>
+                    <div class="salary">💰 ${job.salary}</div>
+
+                    <div class="section">
+                        <div class="section-title">Experience</div>
+                        <span class="tag experience">${job.experience}</span>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Languages</div>
+                        ${job.languages.map(lang => `<span class="tag">${lang}</span>`).join('')}
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">APIs & Protocols</div>
+                        ${job.apis.map(api => `<span class="tag">${api}</span>`).join('')}
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Knowledge Areas</div>
+                        ${job.domains.map(domain => `<span class="tag domain">${domain}</span>`).join('')}
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Tools</div>
+                        ${job.tools.map(tool => `<span class="tag">${tool}</span>`).join('')}
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Requirements</div>
+                        <p style="color: #666; font-size: 0.9em; line-height: 1.5;">${job.required}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function populateGridView() {
+            const gridView = document.getElementById('grid-view');
+            gridView.innerHTML = jobs.map(job => createJobCard(job)).join('');
+        }
+
+        function populateTableView() {
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = jobs.map(job => `
+                <tr>
+                    <td><strong>${job.company}</strong></td>
+                    <td>${job.position}</td>
+                    <td>${job.experience}</td>
+                    <td>${job.languages.join(', ')}</td>
+                    <td>${job.salary}</td>
+                </tr>
+            `).join('');
+        }
+
+        function populateComparisonView() {
+            const comparisonView = document.getElementById('comparison-view');
+
+            let html = `
+                <div class="comparison-section">
+                    <h2>Salary Comparison</h2>
+                    <div class="comparison-grid">
+            `;
+
+            jobs.forEach(job => {
+                html += `
+                    <div class="comparison-item">
+                        <strong>${job.company}</strong>
+                        ${job.salary}
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+
+            // Languages comparison
+            html += `
+                <div class="comparison-section">
+                    <h2>Languages Overview</h2>
+                    <div class="comparison-grid">
+            `;
+
+            const allLanguages = new Set();
+            jobs.forEach(job => job.languages.forEach(lang => allLanguages.add(lang)));
+
+            Array.from(allLanguages).sort().forEach(lang => {
+                const count = jobs.filter(job => job.languages.includes(lang)).length;
+                html += `
+                    <div class="comparison-item">
+                        <strong>${lang}</strong>
+                        Required by ${count}/${jobs.length} companies
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+
+            // Experience comparison
+            html += `
+                <div class="comparison-section">
+                    <h2>Experience Requirements</h2>
+                    <div class="comparison-grid">
+            `;
+
+            jobs.forEach(job => {
+                html += `
+                    <div class="comparison-item">
+                        <strong>${job.company}</strong>
+                        ${job.experience}
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+
+            comparisonView.innerHTML = html;
+        }
+
+        function populateSkillsMatrix() {
+            const skillsView = document.getElementById('skills-view');
+
+            const allLanguages = new Set();
+            const allDomains = new Set();
+
+            jobs.forEach(job => {
+                job.languages.forEach(lang => allLanguages.add(lang));
+                job.domains.forEach(domain => allDomains.add(domain));
+            });
+
+            let html = `<h2>Language Requirements Matrix</h2>
+                <table class="matrix-table">
+                    <thead>
+                        <tr>
+                            <th>Language</th>
+                            ${jobs.map(job => `<th>${job.company}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            Array.from(allLanguages).sort().forEach(lang => {
+                html += `<tr><td>${lang}</td>`;
+                jobs.forEach(job => {
+                    html += `<td>${job.languages.includes(lang) ? '<span class="matrix-check">✓</span>' : '<span class="matrix-x">—</span>'}</td>`;
+                });
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table><br><br><h2>Knowledge Areas Matrix</h2>
+                <table class="matrix-table">
+                    <thead>
+                        <tr>
+                            <th>Knowledge Area</th>
+                            ${jobs.map(job => `<th>${job.company}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            Array.from(allDomains).sort().forEach(domain => {
+                html += `<tr><td>${domain}</td>`;
+                jobs.forEach(job => {
+                    html += `<td>${job.domains.includes(domain) ? '<span class="matrix-check">✓</span>' : '<span class="matrix-x">—</span>'}</td>`;
+                });
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table>`;
+            skillsView.innerHTML = html;
+        }
+
+        function switchView(view) {
+            // Update button states
+            document.querySelectorAll('.view-toggle .btn').forEach(btn => {
+                btn.classList.remove('btn-active');
+                btn.classList.add('btn-inactive');
+            });
+            event.target.classList.remove('btn-inactive');
+            event.target.classList.add('btn-active');
+
+            // Hide all views
+            document.getElementById('grid-view').classList.add('hidden');
+            document.getElementById('table-view').classList.remove('active');
+            document.getElementById('comparison-view').classList.remove('active');
+            document.getElementById('skills-view').style.display = 'none';
+
+            // Show selected view
+            switch(view) {
+                case 'grid':
+                    document.getElementById('grid-view').classList.remove('hidden');
+                    break;
+                case 'table':
+                    document.getElementById('table-view').classList.add('active');
+                    break;
+                case 'comparison':
+                    document.getElementById('comparison-view').classList.add('active');
+                    populateComparisonView();
+                    break;
+                case 'skills':
+                    document.getElementById('skills-view').style.display = 'block';
+                    populateSkillsMatrix();
+                    break;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            populateGridView();
+            populateTableView();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rebecca Beyene — Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            max-width: 560px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .avatar {
+            font-size: 4em;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 2em;
+            font-weight: 900;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            color: #666;
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 36px;
+            line-height: 1.5;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        a.link-btn {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 22px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1em;
+            transition: all 0.25s ease;
+            border: 2px solid transparent;
+        }
+
+        a.link-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .btn-roadmap {
+            background: linear-gradient(135deg, #0a0a2e, #302b63);
+            color: white;
+        }
+
+        .btn-tracker {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-github {
+            background: #f6f8fa;
+            color: #1a1a2e;
+            border-color: #e1e4e8;
+        }
+
+        .btn-icon { font-size: 1.4em; }
+        .btn-text { text-align: left; }
+        .btn-title { display: block; }
+        .btn-sub { font-size: 0.75em; font-weight: 600; opacity: 0.7; }
+
+        footer {
+            margin-top: 32px;
+            color: #aaa;
+            font-size: 0.82em;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="avatar">👩🏾‍💻</div>
+        <h1>Rebecca Beyene</h1>
+        <p class="tagline">Aspiring Backend Engineer<br>Targeting SpaceX · OpenAI · Palantir · Snowflake</p>
+
+        <div class="links">
+            <a href="roadmap.html" class="link-btn btn-roadmap">
+                <span class="btn-icon">🗺️</span>
+                <span class="btn-text">
+                    <span class="btn-title">Learning Roadmap</span>
+                    <span class="btn-sub">My path to backend engineering — track progress</span>
+                </span>
+            </a>
+            <a href="job_tracker.html" class="link-btn btn-tracker">
+                <span class="btn-icon">💼</span>
+                <span class="btn-text">
+                    <span class="btn-title">Job Requirements Tracker</span>
+                    <span class="btn-sub">Skills breakdown for target companies</span>
+                </span>
+            </a>
+            <a href="https://github.com/Rebecca-Beyene" class="link-btn btn-github" target="_blank" rel="noopener">
+                <span class="btn-icon">🐙</span>
+                <span class="btn-text">
+                    <span class="btn-title">GitHub Profile</span>
+                    <span class="btn-sub">github.com/Rebecca-Beyene</span>
+                </span>
+            </a>
+        </div>
+
+        <footer>Building in public · May 2026</footer>
+    </div>
+</body>
+</html>
