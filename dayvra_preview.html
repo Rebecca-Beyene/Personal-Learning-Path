@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayvra — UI Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0A0A1A;
+    --surface: #13132A;
+    --surface2: #1C1C3A;
+    --border: #2A2A4A;
+    --primary: #7C5CBF;
+    --primary-glow: #9B7FD4;
+    --primary-dim: #3D2D6B;
+    --accent: #5B8DEF;
+    --gold: #F0C060;
+    --success: #4ECBA0;
+    --danger: #EF5B5B;
+    --text: #F0EEFF;
+    --muted: #8A88AA;
+    --dim: #4A4870;
+  }
+
+  body {
+    background: #06060F;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--text);
+    padding: 40px 20px;
+  }
+
+  h1.site-title {
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+
+  /* Phone frame */
+  .phone {
+    width: 375px;
+    height: 812px;
+    background: var(--bg);
+    border-radius: 48px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 1px #2A2A4A,
+      0 0 60px rgba(124,92,191,0.3),
+      0 40px 80px rgba(0,0,0,0.8);
+  }
+
+  .notch {
+    width: 120px;
+    height: 30px;
+    background: #000;
+    border-radius: 0 0 20px 20px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+  }
+
+  /* Screen container */
+  .screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background: linear-gradient(160deg, #0A0A1A 0%, #13132A 50%, #0A0A1A 100%);
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+  .screen.active { display: block; }
+
+  /* Nav dots */
+  .nav-dots {
+    display: flex;
+    gap: 8px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 500px;
+  }
+  .nav-dot {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .nav-dot:hover { border-color: var(--primary); color: var(--text); }
+  .nav-dot.active { background: var(--primary-dim); border-color: var(--primary); color: var(--text); }
+
+  /* Gradient text */
+  .grad { background: linear-gradient(90deg, #9B7FD4, #7AAEFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+  /* Glow button */
+  .btn-primary {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(90deg, #7C5CBF, #5B8DEF);
+    border: none;
+    border-radius: 16px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 0 20px rgba(124,92,191,0.5);
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary:hover { box-shadow: 0 0 30px rgba(124,92,191,0.8); transform: translateY(-1px); }
+
+  .btn-success {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(90deg, #4ECBA0, #5B8DEF);
+    border: none;
+    border-radius: 16px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 0 20px rgba(78,203,160,0.4);
+    transition: all 0.2s;
+  }
+  .btn-success:hover { box-shadow: 0 0 30px rgba(78,203,160,0.7); transform: translateY(-1px); }
+
+  .btn-outline {
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    border: 1px solid var(--primary);
+    border-radius: 16px;
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { background: var(--primary-dim); }
+
+  .btn-ghost {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* Input */
+  input[type=text], input[type=email], input[type=password] {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    color: var(--text);
+    font-size: 16px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus { border-color: var(--primary); }
+  input::placeholder { color: var(--dim); }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+  }
+  .card.selected {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, #3D2D6B, #1C1C3A);
+    box-shadow: 0 0 20px rgba(124,92,191,0.4);
+  }
+
+  /* Step badge */
+  .step-badge {
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Labels */
+  .label { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 6px; }
+
+  /* Tab toggle */
+  .tab-row {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 4px;
+    gap: 4px;
+  }
+  .tab {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--primary-dim); color: var(--text); }
+
+  /* Social button */
+  .social-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+  .social-btn:hover { border-color: var(--muted); }
+
+  /* Divider */
+  .divider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .divider { flex: 1; height: 1px; background: var(--border); }
+  .divider-text { color: var(--dim); font-size: 13px; }
+
+  /* Day chips */
+  .day-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .day-chip {
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .day-chip.active { background: var(--primary-dim); border-color: var(--primary); color: var(--text); }
+
+  /* Week strip */
+  .week-strip { display: flex; gap: 6px; overflow-x: auto; padding: 0 20px; scrollbar-width: none; }
+  .week-strip::-webkit-scrollbar { display: none; }
+  .day-pill {
+    min-width: 48px;
+    padding: 10px 6px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .day-pill.active {
+    background: linear-gradient(160deg, #7C5CBF, #5B8DEF);
+    border-color: transparent;
+    box-shadow: 0 0 16px rgba(124,92,191,0.5);
+  }
+  .day-pill .dn { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+  .day-pill .dd { font-size: 18px; font-weight: 700; color: var(--muted); }
+  .day-pill.active .dn, .day-pill.active .dd { color: #fff; }
+  .today-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--primary-glow); }
+
+  /* Block cards */
+  .block-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    display: flex;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .block-card:hover { border-color: var(--primary); }
+  .block-stripe { width: 4px; flex-shrink: 0; }
+  .block-body { flex: 1; padding: 14px; }
+  .block-time { font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  .block-title { font-size: 16px; font-weight: 600; color: var(--text); }
+  .block-desc { font-size: 12px; color: var(--dim); margin-top: 3px; }
+
+  /* Stickers */
+  .sticker-col { display: flex; flex-direction: column; justify-content: center; padding: 10px; gap: 8px; }
+  .sticker {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid;
+    transition: all 0.2s;
+  }
+  .sticker-done { background: rgba(78,203,160,0.15); border-color: #4ECBA0; color: #4ECBA0; }
+  .sticker-done:hover { background: rgba(78,203,160,0.3); box-shadow: 0 0 12px rgba(78,203,160,0.5); }
+  .sticker-fail { background: rgba(239,91,91,0.12); border-color: #EF5B5B; color: #EF5B5B; }
+  .sticker-fail:hover { background: rgba(239,91,91,0.25); }
+
+  /* X mark on reject */
+  .block-card.rejected { border-color: var(--danger); opacity: 0.7; }
+  .block-card.rejected .block-title { text-decoration: line-through; color: var(--muted); }
+  .x-mark { color: var(--danger); font-size: 18px; padding: 0 16px; display: flex; align-items: center; }
+
+  /* Progress bar */
+  .progress-wrap { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; flex: 1; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #7C5CBF, #4ECBA0); border-radius: 2px; }
+
+  /* Obligation card */
+  .ob-card {
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 3px solid var(--primary);
+  }
+
+  /* AI note */
+  .ai-note {
+    background: var(--primary-dim);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .ai-note-icon { color: var(--primary-glow); font-size: 15px; margin-top: 2px; }
+  .ai-note-text { font-size: 13px; color: var(--muted); line-height: 1.6; flex: 1; }
+
+  /* Color dots */
+  .color-dots { display: flex; gap: 10px; }
+  .color-dot {
+    width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+    transition: transform 0.2s; border: 2px solid transparent;
+  }
+  .color-dot.selected { border-color: #fff; transform: scale(1.2); }
+
+  /* Fail card */
+  .fail-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .fail-badge {
+    background: rgba(239,91,91,0.15);
+    border-radius: 8px;
+    padding: 6px 10px;
+    color: var(--danger);
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: auto;
+  }
+
+  /* Status emoji */
+  .status-badge { display: flex; align-items: center; padding: 0 14px; font-size: 20px; }
+
+  /* Page padding */
+  .p { padding: 70px 24px 40px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* Warning */
+  .warning-banner { background: var(--primary-dim); border-radius: 10px; padding: 12px; }
+  .warning-text { color: var(--primary-glow); font-size: 13px; }
+
+  /* Swap selected */
+  .block-card.swap-selected { border-color: var(--gold); }
+  .swap-mark { color: var(--gold); font-size: 18px; padding: 0 14px; display: flex; align-items: center; }
+
+  /* Green dot */
+  .green-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); display: inline-block; margin-right: 6px; box-shadow: 0 0 6px var(--success); }
+
+  /* Scrollable inner */
+  .inner-scroll { overflow-y: auto; height: 100%; scrollbar-width: none; }
+  .inner-scroll::-webkit-scrollbar { display: none; }
+
+  /* Section title */
+  .section-title { font-size: 16px; font-weight: 600; color: var(--text); }
+
+  /* Focus grid */
+  .focus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .focus-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    overflow: hidden;
+    position: relative;
+  }
+  .focus-card.selected {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, #3D2D6B, #1C1C3A);
+    box-shadow: 0 0 16px rgba(124,92,191,0.4);
+  }
+  .focus-emoji { font-size: 28px; }
+  .focus-label { font-size: 16px; font-weight: 700; color: var(--muted); }
+  .focus-card.selected .focus-label { color: var(--text); }
+  .focus-desc { font-size: 11px; color: var(--dim); text-align: center; }
+
+  /* Meal chips */
+  .meal-row { display: flex; gap: 10px; }
+  .meal-chip {
+    flex: 1;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .meal-chip.selected {
+    background: var(--primary-dim);
+    border-color: var(--accent);
+    color: var(--text);
+    box-shadow: 0 0 12px rgba(91,141,239,0.3);
+  }
+
+  /* Day label */
+  .day-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* Weekly success */
+  .success-box { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 40px 0; }
+
+  /* Proposed block */
+  .proposed-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* Screen title nav */
+  .screen-nav { position: absolute; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 50; }
+  .screen-nav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--dim); transition: all 0.3s; }
+  .screen-nav-dot.active { background: var(--primary); width: 20px; border-radius: 3px; }
+
+  /* Glowing star decoration */
+  .glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+  }
+
+  /* Notification preview */
+  .notification {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .notif-icon { font-size: 24px; }
+  .notif-title { font-size: 14px; font-weight: 700; color: var(--text); }
+  .notif-body { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<p class="site-title">✦ Dayvra — Interactive UI Preview</p>
+
+<!-- Screen nav buttons -->
+<div class="nav-dots">
+  <button class="nav-dot active" onclick="showScreen(0)">Login</button>
+  <button class="nav-dot" onclick="showScreen(1)">Sign Up</button>
+  <button class="nav-dot" onclick="showScreen(2)">① Goal</button>
+  <button class="nav-dot" onclick="showScreen(3)">② Obligations</button>
+  <button class="nav-dot" onclick="showScreen(4)">③ Flexibility</button>
+  <button class="nav-dot" onclick="showScreen(5)">④ Focus</button>
+  <button class="nav-dot" onclick="showScreen(6)">Schedule Review</button>
+  <button class="nav-dot" onclick="showScreen(7)">Calendar</button>
+  <button class="nav-dot" onclick="showScreen(8)">Weekly Review</button>
+  <button class="nav-dot" onclick="showScreen(9)">Notification</button>
+</div>
+
+<!-- Phone -->
+<div class="phone" style="margin-top: 32px;">
+  <div class="notch"></div>
+
+  <!-- SCREEN 0: LOGIN -->
+  <div class="screen active" id="screen-0">
+    <div class="glow-orb" style="width:200px;height:200px;background:#7C5CBF;opacity:0.15;top:-50px;left:-50px;"></div>
+    <div class="inner-scroll">
+      <div class="p" style="padding-top:80px;">
+        <div style="text-align:center;margin-bottom:8px;">
+          <div style="font-size:40px;color:#9B7FD4;margin-bottom:8px;">✦</div>
+          <div style="font-size:34px;font-weight:700;letter-spacing:3px;">Dayvra</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:6px;letter-spacing:0.5px;">Your life, beautifully scheduled.</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="social-btn">
+            <span style="font-size:17px;font-weight:700;"></span>
+            Sign in with Apple
+          </button>
+          <button class="social-btn">
+            <span style="font-size:16px;font-weight:700;color:#4285F4;">G</span>
+            Sign in with Google
+          </button>
+        </div>
+
+        <div class="divider-row">
+          <div class="divider"></div>
+          <span class="divider-text">or</span>
+          <div class="divider"></div>
+        </div>
+
+        <div class="tab-row">
+          <button class="tab active">Log In</button>
+          <button class="tab" onclick="showScreen(1)">Sign Up</button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div>
+            <div class="label">Email</div>
+            <input type="email" placeholder="you@email.com" value="rebecca@gmail.com">
+          </div>
+          <div>
+            <div class="label">Password</div>
+            <input type="password" placeholder="Min. 8 characters" value="••••••••••">
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:13px;color:var(--primary);cursor:pointer;">Forgot password?</span>
+          </div>
+          <button class="btn-primary" onclick="showScreen(2)">Log In</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 1: SIGN UP -->
+  <div class="screen" id="screen-1">
+    <div class="glow-orb" style="width:200px;height:200px;background:#5B8DEF;opacity:0.12;top:-40px;right:-60px;"></div>
+    <div class="inner-scroll">
+      <div class="p" style="padding-top:80px;">
+        <div style="text-align:center;margin-bottom:8px;">
+          <div style="font-size:40px;color:#9B7FD4;margin-bottom:8px;">✦</div>
+          <div style="font-size:34px;font-weight:700;letter-spacing:3px;">Dayvra</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:6px;">Your life, beautifully scheduled.</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="social-btn"><span style="font-size:17px;font-weight:700;"></span> Sign up with Apple</button>
+          <button class="social-btn"><span style="font-size:16px;font-weight:700;color:#4285F4;">G</span> Sign up with Google</button>
+        </div>
+
+        <div class="divider-row">
+          <div class="divider"></div><span class="divider-text">or</span><div class="divider"></div>
+        </div>
+
+        <div class="tab-row">
+          <button class="tab" onclick="showScreen(0)">Log In</button>
+          <button class="tab active">Sign Up</button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div><div class="label">Email</div><input type="email" placeholder="you@email.com"></div>
+          <div><div class="label">Password</div><input type="password" placeholder="Min. 8 characters"></div>
+          <div><div class="label">Confirm Password</div><input type="password" placeholder="Re-enter password"></div>
+          <button class="btn-primary" onclick="showScreen(2)">Create Account</button>
+        </div>
+
+        <div style="font-size:11px;color:var(--dim);text-align:center;line-height:1.6;">
+          By creating an account you agree to our Terms of Service and Privacy Policy.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: ONBOARDING - GOAL -->
+  <div class="screen" id="screen-2">
+    <div class="glow-orb" style="width:150px;height:150px;background:#7C5CBF;opacity:0.1;top:100px;right:-40px;"></div>
+    <div class="inner-scroll">
+      <div class="p">
+        <div class="step-badge">Step 1 of 4</div>
+        <div style="font-size:26px;font-weight:700;line-height:1.3;">What do you want<br>to achieve?</div>
+        <div style="font-size:14px;color:var(--muted);">This shapes everything we build for you.</div>
+
+        <div id="goal-cards" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="card" onclick="selectGoal(this)" style="cursor:pointer;display:flex;align-items:center;gap:16px;">
+            <span style="font-size:30px;">🌱</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Personal Development</div>
+              <div style="font-size:12px;color:var(--dim);">Grow skills, build habits, invest in yourself</div>
+            </div>
+          </div>
+          <div class="card" onclick="selectGoal(this)" style="cursor:pointer;display:flex;align-items:center;gap:16px;">
+            <span style="font-size:30px;">🏡</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Family Time</div>
+              <div style="font-size:12px;color:var(--dim);">Be present and nurture the people who matter most</div>
+            </div>
+          </div>
+          <div class="card selected" onclick="selectGoal(this)" style="cursor:pointer;display:flex;align-items:center;gap:16px;">
+            <span style="font-size:30px;">⚖️</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Balance</div>
+              <div style="font-size:12px;color:var(--muted);">Equal attention to work, health, rest, and relationships</div>
+            </div>
+            <span style="color:#9B7FD4;font-size:18px;font-weight:700;">✓</span>
+          </div>
+          <div class="card" onclick="selectGoal(this)" style="cursor:pointer;display:flex;align-items:center;gap:16px;">
+            <span style="font-size:30px;">🚀</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:600;margin-bottom:4px;">Perfect Schedule</div>
+              <div style="font-size:12px;color:var(--dim);">Maximum productivity with a fully optimized day</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="showScreen(3)">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: OBLIGATIONS -->
+  <div class="screen" id="screen-3">
+    <div class="inner-scroll">
+      <div class="p">
+        <div class="step-badge">Step 2 of 4</div>
+        <div style="font-size:26px;font-weight:700;line-height:1.3;">What are your fixed obligations?</div>
+        <div style="font-size:14px;color:var(--muted);">Things that happen at a set time every week.</div>
+
+        <div style="background:var(--surface);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px;">Examples:</div>
+          <div style="font-size:13px;color:var(--dim);">• Mondays 9–5 I work</div>
+          <div style="font-size:13px;color:var(--dim);">• Cook dinner daily</div>
+          <div style="font-size:13px;color:var(--dim);">• Church every Sunday 10am–12pm</div>
+          <div style="font-size:13px;color:var(--dim);">• Gym Tuesday & Thursday 6–7am</div>
+        </div>
+
+        <div class="ob-card" style="border-left-color:#7C5CBF;">
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;">Work</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px;">monday – friday · 09:00 – 17:00</div>
+          </div>
+          <span style="color:var(--danger);font-size:16px;cursor:pointer;">✕</span>
+        </div>
+        <div class="ob-card" style="border-left-color:#4ECBA0;">
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;">Cook dinner</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px;">daily · 18:00 – 19:00</div>
+          </div>
+          <span style="color:var(--danger);font-size:16px;cursor:pointer;">✕</span>
+        </div>
+        <div class="ob-card" style="border-left-color:#F0C060;">
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:600;">Church</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px;">sunday · 10:00 – 12:00</div>
+          </div>
+          <span style="color:var(--danger);font-size:16px;cursor:pointer;">✕</span>
+        </div>
+
+        <button class="btn-outline">+ Add Obligation</button>
+        <button class="btn-primary" onclick="showScreen(4)">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: FLEXIBILITY -->
+  <div class="screen" id="screen-4">
+    <div class="inner-scroll">
+      <div class="p">
+        <div class="step-badge">Step 3 of 4</div>
+        <div style="font-size:26px;font-weight:700;line-height:1.3;">How flexible is your free time?</div>
+        <div style="font-size:14px;color:var(--muted);">This helps us know how freely we can arrange your schedule.</div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="card selected" style="cursor:pointer;display:flex;align-items:center;gap:16px;" onclick="selectFlex(this)">
+            <span style="font-size:32px;">🌊</span>
+            <div style="flex:1;">
+              <div style="font-size:17px;font-weight:600;margin-bottom:6px;">Fully Flexible</div>
+              <div style="font-size:13px;color:var(--muted);">My time outside obligations is completely open. Schedule anything anywhere.</div>
+            </div>
+            <span style="color:#9B7FD4;font-size:18px;font-weight:700;">✓</span>
+          </div>
+          <div class="card" style="cursor:pointer;display:flex;align-items:center;gap:16px;" onclick="selectFlex(this)">
+            <span style="font-size:32px;">📌</span>
+            <div style="flex:1;">
+              <div style="font-size:17px;font-weight:600;margin-bottom:6px;">I Have Structure</div>
+              <div style="font-size:13px;color:var(--dim);">I prefer certain things at certain times. I'll adjust after seeing the schedule.</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="showScreen(5)">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: FOCUS -->
+  <div class="screen" id="screen-5">
+    <div class="inner-scroll">
+      <div class="p">
+        <div class="step-badge">Step 4 of 4</div>
+        <div style="font-size:26px;font-weight:700;line-height:1.3;">Last few things...</div>
+        <div style="font-size:14px;color:var(--muted);">Help us keep your schedule human and healthy.</div>
+
+        <div class="section-title">How long can you focus before burning out?</div>
+        <div class="focus-grid">
+          <div class="focus-card" onclick="selectFocus(this)"><span class="focus-emoji">🌿</span><span class="focus-label">30 min</span><span class="focus-desc">Short bursts, lots of breaks</span></div>
+          <div class="focus-card" onclick="selectFocus(this)"><span class="focus-emoji">🌱</span><span class="focus-label">45 min</span><span class="focus-desc">Light focused work</span></div>
+          <div class="focus-card selected" onclick="selectFocus(this)"><span class="focus-emoji">⚡</span><span class="focus-label">60 min</span><span class="focus-desc">Standard focus blocks</span></div>
+          <div class="focus-card" onclick="selectFocus(this)"><span class="focus-emoji">🔥</span><span class="focus-label">90 min</span><span class="focus-desc">Deep work sessions</span></div>
+          <div class="focus-card" onclick="selectFocus(this)"><span class="focus-emoji">🦅</span><span class="focus-label">2+ hrs</span><span class="focus-desc">Maximum concentration</span></div>
+        </div>
+
+        <div class="section-title">How many meal/snack breaks do you want in your schedule daily?</div>
+        <div class="meal-row">
+          <button class="meal-chip" onclick="selectMeal(this)">1 break</button>
+          <button class="meal-chip" onclick="selectMeal(this)">2 breaks</button>
+          <button class="meal-chip selected" onclick="selectMeal(this)">3 breaks</button>
+        </div>
+
+        <div class="ai-note">
+          <span class="ai-note-icon">✦</span>
+          <span class="ai-note-text">Our AI will now build your first personalized weekly schedule. You'll be able to review and adjust it.</span>
+        </div>
+
+        <button class="btn-primary" onclick="showScreen(6)">✦ Build My Schedule</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 6: SCHEDULE REVIEW -->
+  <div class="screen" id="screen-6">
+    <div class="inner-scroll">
+      <div class="p">
+        <div style="font-size:26px;font-weight:700;">Your Schedule</div>
+        <div style="font-size:14px;color:var(--muted);">Tap any block you'd like moved. ✕ to reject it.</div>
+
+        <div class="day-label">Monday, May 18</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="block-card">
+            <div class="block-stripe" style="background:#5B8DEF;"></div>
+            <div class="block-body">
+              <div class="block-time">07:00 – 07:30</div>
+              <div class="block-title">Morning routine</div>
+              <div class="block-desc">Start the day grounded 🌅</div>
+            </div>
+          </div>
+          <div class="block-card">
+            <div class="block-stripe" style="background:#4ECBA0;"></div>
+            <div class="block-body">
+              <div class="block-time">07:30 – 08:00</div>
+              <div class="block-title">Breakfast</div>
+              <div class="block-desc">Fuel up before the day begins</div>
+            </div>
+          </div>
+          <div class="block-card" style="border-color:var(--accent);">
+            <div class="block-stripe" style="background:#5B8DEF;"></div>
+            <div class="block-body">
+              <div class="block-time">09:00 – 17:00</div>
+              <div class="block-title">Work 📌</div>
+              <div class="block-desc">Fixed obligation</div>
+            </div>
+          </div>
+          <div class="block-card rejected" onclick="this.classList.toggle('rejected')">
+            <div class="block-stripe" style="background:#7C5CBF;"></div>
+            <div class="block-body">
+              <div class="block-time">17:30 – 18:00</div>
+              <div class="block-title">Read for 30 min</div>
+              <div class="block-desc">Personal development</div>
+            </div>
+            <div class="x-mark">✕</div>
+          </div>
+          <div class="block-card">
+            <div class="block-stripe" style="background:#4ECBA0;"></div>
+            <div class="block-body">
+              <div class="block-time">18:00 – 19:00</div>
+              <div class="block-title">Cook & eat dinner 📌</div>
+              <div class="block-desc">Fixed obligation</div>
+            </div>
+          </div>
+          <div class="block-card">
+            <div class="block-stripe" style="background:#7C5CBF;"></div>
+            <div class="block-body">
+              <div class="block-time">19:30 – 20:30</div>
+              <div class="block-title">Exercise</div>
+              <div class="block-desc">Keep your energy high 💪</div>
+            </div>
+          </div>
+          <div class="block-card">
+            <div class="block-stripe" style="background:#F0C060;"></div>
+            <div class="block-body">
+              <div class="block-time">21:00 – 21:30</div>
+              <div class="block-title">Wind down</div>
+              <div class="block-desc">Prep for a great tomorrow ✨</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-outline">Rearrange 1 Block</button>
+        <button class="btn-success" onclick="showScreen(7)">✓ Looks good, let's go!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 7: CALENDAR -->
+  <div class="screen" id="screen-7">
+    <div class="glow-orb" style="width:180px;height:180px;background:#7C5CBF;opacity:0.08;top:60px;right:-60px;"></div>
+    <div class="inner-scroll">
+      <div style="padding:70px 0 40px;display:flex;flex-direction:column;gap:20px;">
+
+        <div style="padding:0 24px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:13px;color:var(--muted);">Good afternoon ✨</div>
+          <div style="font-size:24px;font-weight:700;">Monday, May 18</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
+            <div class="progress-wrap"><div class="progress-fill" style="width:40%;"></div></div>
+            <div style="font-size:13px;color:var(--muted);">2/5 done</div>
+          </div>
+        </div>
+
+        <!-- Week strip -->
+        <div class="week-strip">
+          <div class="day-pill">
+            <span class="dn">Sun</span><span class="dd">17</span>
+          </div>
+          <div class="day-pill active">
+            <span class="dn">Mon</span><span class="dd">18</span>
+            <div class="today-dot"></div>
+          </div>
+          <div class="day-pill">
+            <span class="dn">Tue</span><span class="dd">19</span>
+          </div>
+          <div class="day-pill">
+            <span class="dn">Wed</span><span class="dd">20</span>
+          </div>
+          <div class="day-pill">
+            <span class="dn">Thu</span><span class="dd">21</span>
+          </div>
+          <div class="day-pill">
+            <span class="dn">Fri</span><span class="dd">22</span>
+          </div>
+          <div class="day-pill">
+            <span class="dn">Sat</span><span class="dd">23</span>
+          </div>
+        </div>
+
+        <!-- Blocks -->
+        <div style="padding:0 20px;display:flex;flex-direction:column;gap:10px;">
+
+          <!-- DONE block -->
+          <div class="block-card" style="opacity:0.75;border-color:rgba(78,203,160,0.3);">
+            <div class="block-stripe" style="background:#4ECBA0;"></div>
+            <div class="block-body">
+              <div class="block-time">07:00 – 07:30</div>
+              <div class="block-title" style="text-decoration:line-through;color:var(--muted);">Morning routine</div>
+            </div>
+            <div class="status-badge">⭐</div>
+          </div>
+
+          <!-- DONE block -->
+          <div class="block-card" style="opacity:0.75;border-color:rgba(78,203,160,0.3);">
+            <div class="block-stripe" style="background:#4ECBA0;"></div>
+            <div class="block-body">
+              <div class="block-time">07:30 – 08:00</div>
+              <div class="block-title" style="text-decoration:line-through;color:var(--muted);">Breakfast</div>
+            </div>
+            <div class="status-badge">⭐</div>
+          </div>
+
+          <!-- FIXED block -->
+          <div class="block-card">
+            <div class="block-stripe" style="background:#5B8DEF;"></div>
+            <div class="block-body">
+              <div class="block-time">09:00 – 17:00</div>
+              <div class="block-title">Work</div>
+              <div class="block-desc">Fixed · in progress</div>
+            </div>
+            <div class="sticker-col">
+              <div class="sticker sticker-done">✓</div>
+              <div class="sticker sticker-fail">✕</div>
+            </div>
+          </div>
+
+          <!-- PENDING blocks -->
+          <div class="block-card">
+            <div class="block-stripe" style="background:#7C5CBF;"></div>
+            <div class="block-body">
+              <div class="block-time">17:30 – 18:00</div>
+              <div class="block-title">Read for 30 min</div>
+              <div class="block-desc">Personal development</div>
+            </div>
+            <div class="sticker-col">
+              <div class="sticker sticker-done">✓</div>
+              <div class="sticker sticker-fail">✕</div>
+            </div>
+          </div>
+
+          <div class="block-card">
+            <div class="block-stripe" style="background:#4ECBA0;"></div>
+            <div class="block-body">
+              <div class="block-time">18:00 – 19:00</div>
+              <div class="block-title">Cook & eat dinner</div>
+            </div>
+            <div class="sticker-col">
+              <div class="sticker sticker-done">✓</div>
+              <div class="sticker sticker-fail">✕</div>
+            </div>
+          </div>
+
+          <div class="block-card">
+            <div class="block-stripe" style="background:#7C5CBF;"></div>
+            <div class="block-body">
+              <div class="block-time">19:30 – 20:30</div>
+              <div class="block-title">Exercise</div>
+              <div class="block-desc">Keep your energy high 💪</div>
+            </div>
+            <div class="sticker-col">
+              <div class="sticker sticker-done">✓</div>
+              <div class="sticker sticker-fail">✕</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 8: WEEKLY REVIEW -->
+  <div class="screen" id="screen-8">
+    <div class="inner-scroll">
+      <div class="p">
+        <div class="step-badge">Weekly Review</div>
+        <div style="font-size:24px;font-weight:700;line-height:1.3;">Here's how last week went</div>
+
+        <div style="font-size:13px;font-weight:600;color:var(--muted);">Tasks that didn't happen:</div>
+
+        <div class="fail-card" style="flex-direction:column;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="font-size:15px;font-weight:600;">Read for 30 min</div>
+            <div class="fail-badge">4✕</div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Scheduled: 5:30 PM – 6:00 PM</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <div style="background:rgba(239,91,91,0.12);border:1px solid rgba(239,91,91,0.3);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--danger);">✕ Monday</div>
+            <div style="background:rgba(239,91,91,0.12);border:1px solid rgba(239,91,91,0.3);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--danger);">✕ Tuesday</div>
+            <div style="background:rgba(239,91,91,0.12);border:1px solid rgba(239,91,91,0.3);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--danger);">✕ Thursday</div>
+            <div style="background:rgba(239,91,91,0.12);border:1px solid rgba(239,91,91,0.3);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--danger);">✕ Friday</div>
+          </div>
+        </div>
+        <div class="fail-card" style="flex-direction:column;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="font-size:15px;font-weight:600;">Exercise</div>
+            <div class="fail-badge">3✕</div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Scheduled: 7:30 PM – 8:30 PM</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <div style="background:rgba(239,91,91,0.12);border:1px solid rgba(239,91,91,0.3);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--danger);">✕ Monday</div>
+            <div style="background:rgba(239,91,91,0.12);border:1px solid rgba(239,91,91,0.3);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--danger);">✕ Wednesday</div>
+            <div style="background:rgba(239,91,91,0.12);border:1px solid rgba(239,91,91,0.3);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--danger);">✕ Friday</div>
+          </div>
+        </div>
+
+        <div class="ai-note">
+          <span class="ai-note-icon">✦</span>
+          <span class="ai-note-text">"Read for 30 min" wasn't completed 4 times in its 5:30 PM slot. "Exercise" missed 3 times at 7:30 PM. Want us to try different time slots, or keep the schedule as-is?</span>
+        </div>
+
+        <button class="btn-primary" onclick="showWeeklyProposed()">✦ Try Different Times</button>
+        <button class="btn-ghost">Keep My Current Schedule</button>
+
+        <div id="weekly-proposed" style="display:none;flex-direction:column;gap:12px;">
+          <div style="font-size:15px;font-weight:600;color:var(--text);">New time slots for next week:</div>
+
+          <div class="proposed-block">
+            <div class="block-stripe" style="background:#7C5CBF;"></div>
+            <div class="block-body">
+              <div class="block-time">Mon · 07:30 – 08:00</div>
+              <div class="block-title">Read for 30 min</div>
+            </div>
+          </div>
+          <div class="proposed-block">
+            <div class="block-stripe" style="background:#7C5CBF;"></div>
+            <div class="block-body">
+              <div class="block-time">Mon, Wed, Fri · 06:30 – 07:30</div>
+              <div class="block-title">Exercise</div>
+            </div>
+          </div>
+
+          <button class="btn-success" onclick="showScreen(7)">✓ Approve New Schedule</button>
+          <button class="btn-ghost">Keep old schedule</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 9: NOTIFICATION PREVIEW -->
+  <div class="screen" id="screen-9">
+    <div class="glow-orb" style="width:300px;height:300px;background:#7C5CBF;opacity:0.07;top:200px;left:-100px;"></div>
+    <div class="inner-scroll">
+      <div class="p" style="padding-top:100px;">
+        <div style="font-size:13px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Notification Examples</div>
+
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="font-size:12px;color:var(--dim);font-weight:600;letter-spacing:0.5px;">DAILY CHECK-IN (sent at 9 PM)</div>
+          <div class="notification">
+            <div class="notif-icon">✦</div>
+            <div>
+              <div class="notif-title">Dayvra · End of Day</div>
+              <div class="notif-body">How did today go? Tap to mark your blocks done or missed. Takes 30 seconds 🌙</div>
+            </div>
+          </div>
+
+          <div style="font-size:12px;color:var(--dim);font-weight:600;letter-spacing:0.5px;margin-top:8px;">WEEKLY REVIEW (sent Sunday evening)</div>
+          <div class="notification">
+            <div class="notif-icon">📊</div>
+            <div>
+              <div class="notif-title">Dayvra · Weekly Review</div>
+              <div class="notif-body">Your week is ready to review. "Exercise" wasn't completed 3 times — we have a better plan for next week.</div>
+            </div>
+          </div>
+
+          <div style="font-size:12px;color:var(--dim);font-weight:600;letter-spacing:0.5px;margin-top:8px;">MORNING NUDGE (optional)</div>
+          <div class="notification">
+            <div class="notif-icon">☀️</div>
+            <div>
+              <div class="notif-title">Dayvra · Good morning</div>
+              <div class="notif-body">You have 6 blocks today. First up: Morning routine at 7:00 AM. You've got this ✨</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:12px;">What the ✓/✕ stickers look like at end of day:</div>
+          <div class="block-card" style="margin-bottom:10px;">
+            <div class="block-stripe" style="background:#4ECBA0;"></div>
+            <div class="block-body">
+              <div class="block-time">07:00 – 07:30</div>
+              <div class="block-title" style="text-decoration:line-through;color:var(--muted);">Morning routine</div>
+            </div>
+            <div class="status-badge">⭐</div>
+          </div>
+          <div class="block-card">
+            <div class="block-stripe" style="background:#EF5B5B;"></div>
+            <div class="block-body">
+              <div class="block-time">19:30 – 20:30</div>
+              <div class="block-title">Exercise</div>
+            </div>
+            <div class="status-badge">💙</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- end phone -->
+
+<script>
+  function showScreen(n) {
+    document.querySelectorAll('.screen').forEach((s,i) => {
+      s.classList.toggle('active', i === n);
+    });
+    document.querySelectorAll('.nav-dot').forEach((d,i) => {
+      d.classList.toggle('active', i === n);
+    });
+  }
+
+  function selectGoal(el) {
+    document.querySelectorAll('#goal-cards .card').forEach(c => {
+      c.classList.remove('selected');
+      const check = c.querySelector('.check');
+      if (check) check.remove();
+      c.querySelector('div:first-of-type > div').style.color = '';
+    });
+    el.classList.add('selected');
+    const span = document.createElement('span');
+    span.className = 'check';
+    span.textContent = '✓';
+    span.style.cssText = 'color:#9B7FD4;font-size:18px;font-weight:700;';
+    el.appendChild(span);
+  }
+
+  function selectFlex(el) {
+    document.querySelectorAll('#screen-4 .card').forEach(c => {
+      c.classList.remove('selected');
+      const check = c.querySelector('.check');
+      if (check) check.remove();
+    });
+    el.classList.add('selected');
+    const span = document.createElement('span');
+    span.className = 'check';
+    span.textContent = '✓';
+    span.style.cssText = 'color:#9B7FD4;font-size:18px;font-weight:700;';
+    el.appendChild(span);
+  }
+
+  function selectFocus(el) {
+    document.querySelectorAll('.focus-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function selectMeal(el) {
+    document.querySelectorAll('.meal-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function showWeeklyProposed() {
+    const p = document.getElementById('weekly-proposed');
+    p.style.display = 'flex';
+    p.style.flexDirection = 'column';
+    p.style.gap = '12px';
+  }
+</script>
+
+</body>
+</html>
